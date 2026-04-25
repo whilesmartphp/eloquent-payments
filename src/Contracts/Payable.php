@@ -11,6 +11,4 @@ namespace Whilesmart\Payments\Contracts;
  * HasPayments trait when a payment succeeds, provided
  * `payments.auto_reflect_on_payable` is on.
  */
-interface Payable
-{
-}
+interface Payable {}

@@ -5,6 +5,7 @@ namespace Whilesmart\Payments\Http\Controllers;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Whilesmart\OwnerAccess\Concerns\AuthorizesOwnerController;
 use Whilesmart\Payments\Http\Requests\StorePaymentRequest;
 use Whilesmart\Payments\Http\Requests\UpdatePaymentRequest;
 use Whilesmart\Payments\Http\Resources\PaymentResource;
@@ -12,9 +13,11 @@ use Whilesmart\Payments\Models\Payment;
 
 class PaymentController extends Controller
 {
+    use AuthorizesOwnerController;
+
     public function index(Request $request): JsonResponse
     {
-        $query = Payment::query();
+        $query = $this->scopeAccessibleOwners(Payment::query(), $request->user());
 
         if ($request->filled('payable_type') && $request->filled('payable_id')) {
             $query->where('payable_type', $request->input('payable_type'))
@@ -57,8 +60,10 @@ class PaymentController extends Controller
         ], 201);
     }
 
-    public function show(Payment $payment): JsonResponse
+    public function show(Payment $payment, Request $request): JsonResponse
     {
+        $this->authorizeAccessTo($payment, $request->user());
+
         return response()->json([
             'success' => true,
             'data' => new PaymentResource($payment),
@@ -75,8 +80,9 @@ class PaymentController extends Controller
         ]);
     }
 
-    public function destroy(Payment $payment): JsonResponse
+    public function destroy(Payment $payment, Request $request): JsonResponse
     {
+        $this->authorizeAccessTo($payment, $request->user());
         $payment->delete();
 
         return response()->json([

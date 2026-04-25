@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use Illuminate\Database\QueryException;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\Support\TestInvoice;
 use Tests\TestCase;
@@ -57,7 +58,7 @@ class PaymentApiTest extends TestCase
             'gateway_reference' => 'ch_dup',
         ]);
 
-        $this->expectException(\Illuminate\Database\QueryException::class);
+        $this->expectException(QueryException::class);
 
         $invoice->recordPayment([
             'amount_cents' => 1_000, 'currency' => 'USD',
