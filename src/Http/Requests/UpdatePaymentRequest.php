@@ -3,12 +3,15 @@
 namespace Whilesmart\Payments\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Whilesmart\OwnerAccess\Concerns\AuthorizesOwnerRequest;
 
 class UpdatePaymentRequest extends FormRequest
 {
+    use AuthorizesOwnerRequest;
+
     public function authorize(): bool
     {
-        return true;
+        return $this->authorizeOwnerOfBoundModel('payment');
     }
 
     public function rules(): array

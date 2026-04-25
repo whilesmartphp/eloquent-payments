@@ -3,7 +3,10 @@
 namespace Tests;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Schema;
 use Orchestra\Testbench\TestCase as BaseTestCase;
+use Whilesmart\OwnerAccess\OwnerAccessServiceProvider;
+use Whilesmart\Payments\PaymentsServiceProvider;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -15,7 +18,7 @@ abstract class TestCase extends BaseTestCase
 
         // Payable WITH amount_paid_cents / total_cents / paid_at columns
         // (matches the real eloquent-invoices shape).
-        \Illuminate\Support\Facades\Schema::create('invoices', function ($table) {
+        Schema::create('invoices', function ($table) {
             $table->id();
             $table->string('number');
             $table->unsignedBigInteger('total_cents')->default(0);
@@ -26,7 +29,7 @@ abstract class TestCase extends BaseTestCase
 
         // Payable WITHOUT those columns. Proves the reflection code path is
         // a silent no-op when the payable has no summary fields.
-        \Illuminate\Support\Facades\Schema::create('subscriptions', function ($table) {
+        Schema::create('subscriptions', function ($table) {
             $table->id();
             $table->string('plan');
             $table->timestamps();
@@ -36,7 +39,8 @@ abstract class TestCase extends BaseTestCase
     protected function getPackageProviders($app): array
     {
         return [
-            \Whilesmart\Payments\PaymentsServiceProvider::class,
+            OwnerAccessServiceProvider::class,
+            PaymentsServiceProvider::class,
         ];
     }
 
