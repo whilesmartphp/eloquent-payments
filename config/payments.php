@@ -1,6 +1,10 @@
 <?php
 
+use Whilesmart\Payments\Models\Payment;
+
 return [
+    'model' => Payment::class,
+
     'register_routes' => env('PAYMENTS_REGISTER_ROUTES', true),
     'route_prefix' => env('PAYMENTS_ROUTE_PREFIX', 'api'),
     'route_middleware' => ['api', 'auth:sanctum'],

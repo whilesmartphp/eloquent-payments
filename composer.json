@@ -2,7 +2,7 @@
     "name": "whilesmart/eloquent-payments",
     "description": "Polymorphic payment records for Laravel: gateway-agnostic audit trail attachable to invoices, expenses, subscriptions, or any payable.",
     "type": "library",
-    "package-version": "1.0.0",
+    "version": "1.0.0",
     "license": "MIT",
     "authors": [
         { "name": "Whilesmart Team" }
@@ -10,7 +10,7 @@
     "require": {
         "php": "^8.2",
         "laravel/framework": "^11.0|^12.0",
-        "whilesmart/eloquent-owner-access": "dev-dev"
+        "whilesmart/eloquent-owner-access": "^1.0"
     },
     "config": {
         "platform": {

@@ -20,7 +20,7 @@ trait HasPayments
 {
     public function payments(): MorphMany
     {
-        return $this->morphMany(Payment::class, 'payable');
+        return $this->morphMany(config('payments.model', Payment::class), 'payable');
     }
 
     public function succeededPaymentsSumCents(): int

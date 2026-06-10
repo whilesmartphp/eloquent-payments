@@ -17,7 +17,8 @@ class PaymentController extends Controller
 
     public function index(Request $request): JsonResponse
     {
-        $query = $this->scopeAccessibleOwners(Payment::query(), $request->user());
+        $model = $this->model();
+        $query = $this->scopeAccessibleOwners($model::query(), $request->user());
 
         if ($request->filled('payable_type') && $request->filled('payable_id')) {
             $query->where('payable_type', $request->input('payable_type'))
@@ -52,7 +53,8 @@ class PaymentController extends Controller
 
     public function store(StorePaymentRequest $request): JsonResponse
     {
-        $payment = Payment::create($request->validated());
+        $model = $this->model();
+        $payment = $model::create($request->validated());
 
         return response()->json([
             'success' => true,
@@ -60,7 +62,7 @@ class PaymentController extends Controller
         ], 201);
     }
 
-    public function show(Payment $payment, Request $request): JsonResponse
+    public function show(Request $request, $payment): JsonResponse
     {
         $this->authorizeAccessTo($payment, $request->user());
 
@@ -70,7 +72,7 @@ class PaymentController extends Controller
         ]);
     }
 
-    public function update(UpdatePaymentRequest $request, Payment $payment): JsonResponse
+    public function update(UpdatePaymentRequest $request, $payment): JsonResponse
     {
         $payment->update($request->validated());
 
@@ -80,7 +82,7 @@ class PaymentController extends Controller
         ]);
     }
 
-    public function destroy(Payment $payment, Request $request): JsonResponse
+    public function destroy(Request $request, $payment): JsonResponse
     {
         $this->authorizeAccessTo($payment, $request->user());
         $payment->delete();
@@ -89,5 +91,10 @@ class PaymentController extends Controller
             'success' => true,
             'message' => 'Payment deleted.',
         ]);
+    }
+
+    private function model(): string
+    {
+        return config('payments.model', Payment::class);
     }
 }
