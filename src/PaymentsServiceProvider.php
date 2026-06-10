@@ -4,6 +4,7 @@ namespace Whilesmart\Payments;
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Whilesmart\Payments\Models\Payment;
 
 class PaymentsServiceProvider extends ServiceProvider
 {
@@ -23,6 +24,8 @@ class PaymentsServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/../database/migrations' => database_path('migrations'),
         ], 'payments-migrations');
+
+        Route::model('payment', config('payments.model', Payment::class));
 
         if (config('payments.register_routes', true)) {
             Route::middleware(config('payments.route_middleware', ['api', 'auth:sanctum']))

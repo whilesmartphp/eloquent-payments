@@ -14,5 +14,6 @@ All notable changes to `whilesmart/eloquent-payments` are documented here.
 - Unique `(gateway, gateway_reference)` constraint
 - Auto-registered API routes: `apiResource payments`
 - Config flag `auto_reflect_on_payable` to disable automatic reflection
+- Swappable `Payment` model via the `payments.model` config
 - Factory for testing
 - Publishable config (`payments-config`) and migrations (`payments-migrations`)
