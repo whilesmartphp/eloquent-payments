@@ -3,4 +3,6 @@ vendor/
 .idea/
 .phpunit.result.cache
 workbench/storage
+storage/
 .vscode
+composer.lock
