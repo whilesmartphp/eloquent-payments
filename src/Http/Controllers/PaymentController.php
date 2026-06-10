@@ -5,6 +5,7 @@ namespace Whilesmart\Payments\Http\Controllers;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Whilesmart\OwnerAccess\Concerns\AuthorizesOwnerController;
 use Whilesmart\Payments\Http\Requests\StorePaymentRequest;
 use Whilesmart\Payments\Http\Requests\UpdatePaymentRequest;
 use Whilesmart\Payments\Http\Resources\PaymentResource;
@@ -12,9 +13,12 @@ use Whilesmart\Payments\Models\Payment;
 
 class PaymentController extends Controller
 {
+    use AuthorizesOwnerController;
+
     public function index(Request $request): JsonResponse
     {
-        $query = Payment::query();
+        $model = $this->model();
+        $query = $this->scopeAccessibleOwners($model::query(), $request->user());
 
         if ($request->filled('payable_type') && $request->filled('payable_id')) {
             $query->where('payable_type', $request->input('payable_type'))
@@ -49,7 +53,8 @@ class PaymentController extends Controller
 
     public function store(StorePaymentRequest $request): JsonResponse
     {
-        $payment = Payment::create($request->validated());
+        $model = $this->model();
+        $payment = $model::create($request->validated());
 
         return response()->json([
             'success' => true,
@@ -57,15 +62,17 @@ class PaymentController extends Controller
         ], 201);
     }
 
-    public function show(Payment $payment): JsonResponse
+    public function show(Request $request, $payment): JsonResponse
     {
+        $this->authorizeAccessTo($payment, $request->user());
+
         return response()->json([
             'success' => true,
             'data' => new PaymentResource($payment),
         ]);
     }
 
-    public function update(UpdatePaymentRequest $request, Payment $payment): JsonResponse
+    public function update(UpdatePaymentRequest $request, $payment): JsonResponse
     {
         $payment->update($request->validated());
 
@@ -75,13 +82,19 @@ class PaymentController extends Controller
         ]);
     }
 
-    public function destroy(Payment $payment): JsonResponse
+    public function destroy(Request $request, $payment): JsonResponse
     {
+        $this->authorizeAccessTo($payment, $request->user());
         $payment->delete();
 
         return response()->json([
             'success' => true,
             'message' => 'Payment deleted.',
         ]);
+    }
+
+    private function model(): string
+    {
+        return config('payments.model', Payment::class);
     }
 }
